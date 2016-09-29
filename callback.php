@@ -30,10 +30,10 @@ $post_content = http_build_query([
     'grant_type' => 'authorization_code',
 ], "", "&");
 
-$header = array(
+$header = [
     "Content-Type: application/x-www-form-urlencoded",
     "Content-Length: ".strlen($post_content)
-);
+];
 
 $context = stream_context_create([
     "http" => [

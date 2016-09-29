@@ -30,19 +30,19 @@ if($_SERVER["REQUEST_METHOD"]==="POST"){
     // 送信データ組み立て
     $post_content = http_build_query($params, "", "&");
 
-    $header = array(
+    $header = [
         "Content-Type: application/x-www-form-urlencoded",
         "Content-Length: ".strlen($post_content),
         "Authorization: Bearer ".(string)ACCESS_TOKEN,
-    );
+    ];
 
-    $context = array(
-        "http" => array(
+    $context = [
+        "http" => [
             "method"  => "POST",
             "header"  => implode("\r\n", $header),
             "content" => $post_content
-        )
-    );
+        ]
+    ];
 
     // APIへ送信
     $response_json_str = file_get_contents('https://notify-api.line.me/api/notify', false, stream_context_create($context));
