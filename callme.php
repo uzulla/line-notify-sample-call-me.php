@@ -43,15 +43,18 @@ $_SESSION['csrf_token'] = bin2hex($random_bytes);
 if ($is_execute) { // 実行したか（結果を表示するか
     if ($is_success) { // 成功したか
         echo "<h1>送信成功</h1>";
-        echo "<p>APIのrate limitはあと{$line_notify->getLastRatelimitRemaining()}回のこっています。</p>";
-        $rate_limit_reset_date_str = date('Y-m-d H:i:s', $line_notify->getLastRateLimitResetDateEpoch());
-        echo "<p>APIのrate limitは{$rate_limit_reset_date_str}(UNIX秒:{$line_notify->getLastRateLimitResetDateEpoch()})に回復します。</p>";
     } else {
         echo "<h1>送信失敗</h1>";
         echo "<p>以下はデバッグ情報です（通常表示する必要はありません）</p>";
-        echo "<textarea>";
+        echo "<textarea style='width:100%; height:500px'>";
         echo htmlspecialchars(print_r($line_notify->getLastError(), 1), ENT_QUOTES);
         echo "</textarea>";
+    }
+
+    if(!is_null($line_notify->getLastRatelimitRemaining())) {
+        echo "<p>APIのrate limitはあと{$line_notify->getLastRatelimitRemaining()}回のこっています。</p>";
+        $rate_limit_reset_date_str = date('Y-m-d H:i:s', $line_notify->getLastRateLimitResetDateEpoch());
+        echo "<p>APIのrate limitは{$rate_limit_reset_date_str}(UNIX秒:{$line_notify->getLastRateLimitResetDateEpoch()})に回復します。</p>";
     }
 }
 ?>
