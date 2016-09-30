@@ -5,10 +5,10 @@ include __DIR__ . "/LineNotifySimpleLib.php";
 session_start();
 
 $is_execute = false;
-$success = false;
+$is_success = false;
 if ($_SERVER["REQUEST_METHOD"] === "POST" && $_SESSION['csrf_token'] === $_POST['csrf_token']) {
     $line_notify = new \Uzulla\Net\LineNotifySimpleLib(LINE_NOTIFY_CLIENT_ID, LINE_NOTIFY_CLIENT_SECRET, CALLBACK_URL, ACCESS_TOKEN);
-    $success = $line_notify->sendMessage($_POST['message'], $_POST['imageThumbnail'], $_POST['imageFullsize']);
+    $is_success = $line_notify->sendMessage($_POST['message'], $_POST['imageThumbnail'], $_POST['imageFullsize']);
     $is_execute = true;
 }
 
@@ -38,8 +38,8 @@ $_SESSION['csrf_token'] = bin2hex($random_bytes);
 </form>
 
 <?php
-if ($is_execute) {
-    if ($success) {
+if ($is_execute) { // 実行したか（結果を表示するか
+    if ($is_success) { // 成功したか
         echo "<h1>送信成功</h1>";
         echo "<p>APIのrate limitはあと{$line_notify->getLastRatelimitRemaining()}回のこっています。</p>";
         $rate_limit_reset_date_str = date('Y-m-d H:i:s', $line_notify->getLastRateLimitResetDateEpoch());
