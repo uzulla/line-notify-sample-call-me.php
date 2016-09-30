@@ -51,7 +51,6 @@ class LineNotifySimpleLib
                 'state' => $_SESSION[$this->SESSION_STATE_KEY],
             ], "", "&");
 
-        error_log($url);
         header("Location: {$url}");
     }
 
