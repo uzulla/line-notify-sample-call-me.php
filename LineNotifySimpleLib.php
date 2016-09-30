@@ -197,16 +197,16 @@ class LineNotifySimpleLib
             "Authorization: Bearer " . $access_token,
         ];
 
-        $context = [
+        $context = stream_context_create([
             "http" => [
                 "method" => "POST",
                 "header" => implode("\r\n", $header),
                 "content" => $post_content
             ]
-        ];
+        ]);
 
         // APIへ送信
-        $response_json_str = file_get_contents('https://notify-api.line.me/api/notify', false, stream_context_create($context));
+        $response_json_str = file_get_contents('https://notify-api.line.me/api/notify', false, $context);
 
         $response = json_decode($response_json_str, true);
 
