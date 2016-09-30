@@ -23,7 +23,7 @@ if ($access_token === false) {
 } else {
     echo "<h1>認証成功</h1>";
     echo "<p>access_token <input type='text' width='400px' value='" . htmlspecialchars($access_token, ENT_QUOTES) . "'></p>";
-    echo "<p>上記access_tokenをsettings.phpに設定してください</p>";
+    echo "<p>※上記access_tokenをコピペして送信してください</p>";
 }
 ?>
 

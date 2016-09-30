@@ -11,7 +11,6 @@ class LineNotifySimpleLib
     private $LINE_NOTIFY_CLIENT_ID;
     private $LINE_NOTIFY_CLIENT_SECRET;
     private $CALLBACK_URL;
-    private $ACCESS_TOKEN = null;
     private $SESSION_STATE_KEY = 'state_random_str';
     private $lastError = [];
     private $lastRatelimitRemaining = null;
@@ -22,14 +21,12 @@ class LineNotifySimpleLib
      * @param string $LINE_NOTIFY_CLIENT_ID LINE Notify Client ID.
      * @param string $LINE_NOTIFY_CLIENT_SECRET LINE Notify Client Secret.
      * @param string $CALLBACK_URL 実際に設置されるcallbackのURL
-     * @param null/string $ACCESS_TOKEN LINE Notifyから発行されるAccess token。投稿以外では不要
      */
-    public function __construct($LINE_NOTIFY_CLIENT_ID, $LINE_NOTIFY_CLIENT_SECRET, $CALLBACK_URL, $ACCESS_TOKEN = null)
+    public function __construct($LINE_NOTIFY_CLIENT_ID, $LINE_NOTIFY_CLIENT_SECRET, $CALLBACK_URL)
     {
         $this->LINE_NOTIFY_CLIENT_ID = $LINE_NOTIFY_CLIENT_ID;
         $this->LINE_NOTIFY_CLIENT_SECRET = $LINE_NOTIFY_CLIENT_SECRET;
         $this->CALLBACK_URL = $CALLBACK_URL;
-        $this->ACCESS_TOKEN = $ACCESS_TOKEN;
     }
 
     /**
@@ -174,20 +171,14 @@ class LineNotifySimpleLib
     /**
      * LINE Notify APIにより、メッセージを送信
      * 各パラメタの詳細はLINE Notifyドキュメントの同名のパラメタを確認してください
+     * @param string $access_token アクセストークン
      * @param string $message メッセージ文字列
      * @param null $imageThumbnail サムネイル画像URL
      * @param null $imageFullsize フルサイズ画像URL
      * @return bool 成功/失敗
      */
-    public function sendMessage($message, $imageThumbnail = null, $imageFullsize = null, $access_token=null)
+    public function sendMessage($access_token, $message, $imageThumbnail = null, $imageFullsize = null)
     {
-        if (is_null($access_token) && is_null($this->ACCESS_TOKEN)) {
-            $this->lastError = [
-                'message' => 'ACCESS_TOKEN is null'
-            ];
-            return false;
-        }
-
         $params = [];
         $params['message'] = $message;
         if (strlen($imageThumbnail) > 0) {
@@ -203,7 +194,7 @@ class LineNotifySimpleLib
         $header = [
             "Content-Type: application/x-www-form-urlencoded",
             "Content-Length: " . strlen($post_content),
-            "Authorization: Bearer " . $this->ACCESS_TOKEN,
+            "Authorization: Bearer " . $access_token,
         ];
 
         $context = [
