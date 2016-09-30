@@ -173,11 +173,11 @@ class LineNotifySimpleLib
      * 各パラメタの詳細はLINE Notifyドキュメントの同名のパラメタを確認してください
      * @param string $access_token アクセストークン
      * @param string $message メッセージ文字列
-     * @param null $imageThumbnail サムネイル画像URL
-     * @param null $imageFullsize フルサイズ画像URL
+     * @param string $imageThumbnail サムネイル画像URL
+     * @param string $imageFullsize フルサイズ画像URL
      * @return bool 成功/失敗
      */
-    public function sendMessage($access_token, $message, $imageThumbnail = null, $imageFullsize = null)
+    public function sendMessage($access_token, $message, $imageThumbnail = '', $imageFullsize = '')
     {
         $params = [];
         $params['message'] = $message;
@@ -222,6 +222,8 @@ class LineNotifySimpleLib
         // APIをたたきすぎないように、何らかの形でX-RateLimit-Remainingを確認し、
         // 残数が0であればX-RateLimit-Resetの時刻までリクエストしないように実装する必要があります。
         // 以下は確認する方法であって、別途送信制御を実装してください。
+        $this->lastRatelimitRemaining = null;
+        $this->lastRateLimitResetDateEpoch = null;
         foreach ($http_response_header as $header_line) {
             if (preg_match('/^X-RateLimit-Remaining: ([0-9]+)/i', $header_line, $_)) {
                 $this->lastRatelimitRemaining = (int)$_[1];
