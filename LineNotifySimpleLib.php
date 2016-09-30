@@ -90,10 +90,10 @@ class LineNotifySimpleLib
 
         // APIへのPOSTデータ用意
         $post_content = http_build_query([
-            'code' => (string)$_GET['code'],
-            'redirect_uri' => CALLBACK_URL,
-            'client_id' => LINE_NOTIFY_CLIENT_ID,
-            'client_secret' => LINE_NOTIFY_CLIENT_SECRET,
+            'code' => (string)$params['code'],
+            'redirect_uri' => $this->CALLBACK_URL,
+            'client_id' => $this->LINE_NOTIFY_CLIENT_ID,
+            'client_secret' => $this->LINE_NOTIFY_CLIENT_SECRET,
             'grant_type' => 'authorization_code',
         ], "", "&");
 
