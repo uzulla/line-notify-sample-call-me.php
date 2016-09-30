@@ -1,7 +1,11 @@
 <?php
-
 namespace Uzulla\Net;
 
+/**
+ * LINE Notify を利用するライブラリです
+ * Class LineNotifySimpleLib
+ * @package Uzulla\Net
+ */
 class LineNotifySimpleLib
 {
     private $LINE_NOTIFY_CLIENT_ID;
@@ -13,7 +17,13 @@ class LineNotifySimpleLib
     private $lastRatelimitRemaining = null;
     private $lastRateLimitResetDateEpoch = null;
 
-
+    /**
+     * LineNotifySimpleLib constructor.
+     * @param string $LINE_NOTIFY_CLIENT_ID LINE Notify Client ID.
+     * @param string $LINE_NOTIFY_CLIENT_SECRET LINE Notify Client Secret.
+     * @param string $CALLBACK_URL 実際に設置されるcallbackのURL
+     * @param null/string $ACCESS_TOKEN LINE Notifyから発行されるAccess token。投稿以外では不要
+     */
     public function __construct($LINE_NOTIFY_CLIENT_ID, $LINE_NOTIFY_CLIENT_SECRET, $CALLBACK_URL, $ACCESS_TOKEN = null)
     {
         $this->LINE_NOTIFY_CLIENT_ID = $LINE_NOTIFY_CLIENT_ID;
@@ -22,6 +32,9 @@ class LineNotifySimpleLib
         $this->ACCESS_TOKEN = $ACCESS_TOKEN;
     }
 
+    /**
+     * LINE Notifyの認証フォームへリダイレクト
+     */
     public function redirectToAuthorizeURL()
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -57,6 +70,12 @@ class LineNotifySimpleLib
         return bin2hex($random_bytes);
     }
 
+    /**
+     * LINE Notifyからのcallbackで取得できるcode、stateを確認し、
+     * access_tokenをLINE Notifyから取得する。
+     * @param $params $_GETなど
+     * @return bool 成功/失敗
+     */
     public function requestAccessToken($params)
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -126,24 +145,44 @@ class LineNotifySimpleLib
         }
     }
 
+    /**
+     * 最後の実行時エラーの詳細を納めた配列を取得
+     * @return array
+     */
     public function getLastError()
     {
         return $this->lastError;
     }
 
+    /**
+     * 最後の実行時（投稿など）に取得できた API実行可能残回数
+     * @return null/integer
+     */
     public function getLastRatelimitRemaining()
     {
         return $this->lastRatelimitRemaining;
     }
 
+    /**
+     * 最後の実行時（投稿など）に取得できた API実行可能残回数のリセット予定時刻
+     * @return null/integer
+     */
     public function getLastRateLimitResetDateEpoch()
     {
         return $this->lastRateLimitResetDateEpoch;
     }
 
-    public function sendMessage($message, $imageThumbnail = null, $imageFullsize = null)
+    /**
+     * LINE Notify APIにより、メッセージを送信
+     * 各パラメタの詳細はLINE Notifyドキュメントの同名のパラメタを確認してください
+     * @param string $message メッセージ文字列
+     * @param null $imageThumbnail サムネイル画像URL
+     * @param null $imageFullsize フルサイズ画像URL
+     * @return bool 成功/失敗
+     */
+    public function sendMessage($message, $imageThumbnail = null, $imageFullsize = null, $access_token=null)
     {
-        if (is_null($this->ACCESS_TOKEN)) {
+        if (is_null($access_token) && is_null($this->ACCESS_TOKEN)) {
             $this->lastError = [
                 'message' => 'ACCESS_TOKEN is null'
             ];
